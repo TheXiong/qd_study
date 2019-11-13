@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<title>canvas</title>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="100" height="100"></canvas>
+	</body>
+	<script type="text/javascript">
+		window.onload = function() {
+			drawCanvas(100 , 95 , "rgba(135, 206, 250, .8)","rgba(255, 0, 0, .8)");
+
+			function drawCanvas(l, p , fillColor , borderColor) {
+				let canvas = document.querySelector('#myCanvas')
+				let ctx = canvas.getContext('2d');
+                let rectLength = l; //边长
+                let percent = p;
+                let r = rectLength * 0.2 //环进度条宽度
+
+                //环面积
+                let area = (rectLength ** 2) - ((rectLength - 2 * r) ** 2);
+                let f1 = (rectLength/2) * r;
+                let f2 = f1 + ((rectLength -r) * r) ;
+                let f3 = f2 + ((rectLength -r) * r);
+                let f4 = f3 + ((rectLength -r) * r);
+                let f5 = f4 + ((rectLength/2 - r) * r);
+                let drawArea = area * percent /100;
+                
+                ctx.beginPath();
+                ctx.strokeStyle = 'transparent'
+                ctx.fillStyle = fillColor;
+                ctx.moveTo(rectLength/2,0);
+                ctx.lineTo(rectLength/2,r)
+                if (drawArea <= f1) {
+                    drawLength = drawArea/r;
+                    ctx.lineTo(rectLength/2 - drawLength,r)
+                    ctx.lineTo(rectLength/2 - drawLength,0)
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.fill()
+                }else if(drawArea <= f2){
+                    drawLength = (drawArea - f1)/r;
+                    ctx.lineTo(r,r)
+                    ctx.lineTo(r,drawLength+r)
+                    ctx.lineTo(0,drawLength+r)
+                    ctx.lineTo(0,0)
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.fill()
+                }else if (drawArea <= f3) {
+                    drawLength = (drawArea - f2)/r;
+                    ctx.lineTo(r,r)
+                    ctx.lineTo(r,rectLength-r)
+                    ctx.lineTo(r+drawLength,rectLength-r)
+                    ctx.lineTo(r+drawLength,rectLength)
+                    ctx.lineTo(0,rectLength)
+                    ctx.lineTo(0,0)
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.fill()
+                }else if (drawArea <= f4) {
+                    drawLength = (drawArea - f3)/r;
+                    ctx.lineTo(r,r)
+                    ctx.lineTo(r,rectLength-r)
+                    ctx.lineTo(rectLength-r,rectLength-r)
+                    ctx.lineTo(rectLength-r,rectLength-(r+drawLength))
+                    ctx.lineTo(rectLength,rectLength-(r+drawLength))
+                    ctx.lineTo(rectLength,rectLength)
+                    ctx.lineTo(0,rectLength)
+                    ctx.lineTo(0,0)
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.fill()
+                }else if(drawArea < f5){
+                    drawLength = (drawArea - f4)/r;
+                    ctx.lineTo(r,r)
+                    ctx.lineTo(r,rectLength-r)
+                    ctx.lineTo(rectLength-r,rectLength-r)
+                    ctx.lineTo(rectLength-r,r)
+                    ctx.lineTo(rectLength-r-drawLength,r)
+                    ctx.lineTo(rectLength-r-drawLength,0)
+                    ctx.lineTo(rectLength,0)
+                    ctx.lineTo(rectLength,rectLength)
+                    ctx.lineTo(0,rectLength)
+                    ctx.lineTo(0,0)
+                    ctx.closePath();
+                    ctx.stroke();
+                    ctx.fill()
+                }else{ //drawArea == f5
+                    ctx.closePath();
+                    ctx.beginPath();
+                    ctx.fillRect(0, 0, rectLength, rectLength);
+                    ctx.clearRect(r, r, (rectLength - 2 * r),(rectLength - 2 * r));
+                }
+                ctx.strokeStyle = borderColor
+                ctx.strokeRect(0, 0, rectLength, rectLength);
+			}
+		}
+	</script>
+</html>

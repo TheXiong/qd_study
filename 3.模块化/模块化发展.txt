@@ -1,0 +1,98 @@
+一、原始写法(变量污染)
+ 　　function m1(){
+　　　　//...
+　　}
+
+　　function m2(){
+　　　　//...
+　　}
+二、对象写法（变量不会污染）
+ var module1 = new Object({
+
+　　　　_count : 0,
+
+　　　　m1 : function (){
+　　　　　　//...
+　　　　},
+
+　　　　m2 : function (){
+　　　　　　//...
+　　　　}
+
+　　});
+三、立即执行函数写法IIFE（不暴露私有成员的目的）
+ var module1 = (function(){
+
+　　　　var _count = 0;
+
+　　　　var m1 = function(){
+　　　　　　//...
+　　　　};
+
+　　　　var m2 = function(){
+　　　　　　//...
+　　　　};
+
+　　　　return {
+　　　　　　m1 : m1,
+　　　　　　m2 : m2
+　　　　};
+
+　　})();
+四、IIFE模式增强 : 引入依赖
+ var module1 = (function ($, YAHOO) {
+
+　　　　//...
+
+　　})(jQuery, YAHOO);
+ 1.请求过多
+ 2.依赖模糊
+ 3.难以维护
+
+
+
+----------------------------------------模块标准化---------------------------------
+
+一、commonjs-----nodejs
+  1.服务器端必须要有模块化
+  2.commonjs不适用于浏览器（Browserify 是目前最常用的 CommonJS 格式转换的工具。）
+二、CommonJS（同步） 中逐渐分裂出了 AMD（异步模块定义）-------requireJS
+  require([module], callback);
+三、CMD（通用模块定义）------SeaJS
+  AMD是 依赖关系前置 , 在定义模块的时候就要声明其依赖的模块;
+  CMD是 按需加载依赖就近 ,只有在用到某个模块的时候再去require。
+  // CMD
+  define(function(require, exports, module) {
+    var a = require('./a')
+    a.doSomething()
+    // 此处略去 100 行
+    var b = require('./b') // 依赖可以就近书写
+    b.doSomething()
+    // ...
+  })
+
+  // AMD 默认推荐的是
+  define(['./a', './b'], function(a, b) { // 依赖必须一开始就写好
+    a.doSomething()
+    // 此处略去 100 行
+    b.doSomething()
+    ...
+  })
+四、UMD（跨平台模块化，项目常用）
+  使用该中模块化方案，可以很好地兼容AMD， CommonJS等模块化语法。
+  (function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD. Register as an anonymous module.
+        define(['exports', 'echarts'], factory);
+    } else if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
+        // CommonJS, node
+        factory(exports, require('echarts'));
+    } else {
+        // Browser globals
+        factory({}, root.echarts);
+    }
+  }(this, function (exports, echarts) {
+    // do something
+  }));
+  这种模块定义方法，可以看做是IIFE的变体。不同的是它倒置了代码的运行顺序，需要你将所需运  行的函数作为第二个参数传入。
+

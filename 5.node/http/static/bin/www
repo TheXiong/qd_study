@@ -1,0 +1,27 @@
+#! /usr/bin/env node
+
+const yargs = require('yargs')
+let defaultConfig = require('../config')
+let createServer = require('../src/app')
+
+let argv = yargs
+    // .command('serve [port]', 'start the server', (yargs) => {
+    //     yargs
+    //         .positional('port', {
+    //             describe: 'port to bind on',
+    //             default: 5000
+    //         })
+    // }, (argv) => {
+    //     if (argv.verbose) console.info(`start server on :${argv.port}`)
+    //     serve(argv.port)
+    // })
+    // .usage("aaaa")
+    // .example('aaa')
+    // .option('verbose', {
+    //     alias: 'v',
+    //     type: 'boolean',
+    //     description: 'Run with verbose logging'
+    // })
+    .argv;
+
+createServer({...defaultConfig,...argv})

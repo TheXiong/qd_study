@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<title>canvas</title>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="100" height="100"></canvas>
+	</body>
+	<script type="text/javascript">
+		window.onload = function() {
+			drawCanvas(100 , 8 , 'rgb(255,0,0)', 10 , 5);
+
+			function drawCanvas(l , ballRadius , ballColor , total , current) {
+				let canvas = document.querySelector('#myCanvas')
+				let ctx = canvas.getContext('2d');
+                let rectLength = l; //边长
+                let shadowBlur = ballRadius / 5;
+                let points = getPoint(rectLength/2-ballRadius - shadowBlur,rectLength/2,rectLength/2,total);
+
+                ctx.beginPath();
+                ctx.strokeStyle = 'transparent'
+                ctx.fillStyle = ballColor;
+                ctx.shadowBlur = shadowBlur;
+                ctx.shadowColor = ballColor;
+                points.slice(0,current).forEach(function(point){
+                    ctx.moveTo(point.x, point.y);
+                    ctx.arc(point.x, point.y, ballRadius, 0, 2 * Math.PI);
+                    ctx.fill()
+                })
+            }
+            
+            /*
+            * 求圆周上等分点的坐标
+            * ox,oy为圆心坐标
+            * r为半径
+            * count为等分个数
+            */
+            function getPoint(r, ox, oy, count){
+                let point = []; //结果
+                let radians = (Math.PI / 180) * Math.round(360 / count), //弧度
+                    i = 0;
+                for(; i < count; i++){
+                    let x = ox + r * Math.sin(radians * i),
+                        y = oy + r * Math.cos(radians * i);
+
+                    point.unshift({x:x,y:y}); //为保持数据顺时针
+                }
+                return point
+            }
+		}
+	</script>
+</html>

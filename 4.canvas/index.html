@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0">
+		<title>canvas</title>
+	</head>
+
+	<body>
+		<canvas id="myCanvas" width="140" height="40"></canvas>
+	</body>
+	<script type="text/javascript">
+		window.onload = function() {
+			drawCanvas(140, 40, 30);
+
+			function drawCanvas(cw, ch, bh) {
+				let canvas = document.querySelector('#myCanvas')
+				let ctx = canvas.getContext('2d');
+				let radians = (Math.PI / 180) * 180;
+				let startTime = Date.now();
+				let time = 2000;
+				let clockwise = 0;
+				let cp1x, cp1y, cp2x, cp2y;
+				let canvasWidth = cw;
+				let canvasHeight = ch;
+				let baseHeight = bh;
+				let xRange = 15;
+				let yRange = 20;
+
+				requestAnimationFrame(function waveDraw() {
+					let t = Math.min(1.0, (Date.now() - startTime) / time);
+
+					if (clockwise) {
+						cp1x = 0 + (xRange * t);
+						cp1y = (canvasHeight - baseHeight) + (yRange * t);
+						cp2x = canvasWidth - (xRange * t);
+						cp2y = canvasHeight - (yRange * t);
+					} else {
+						cp1x = xRange - (xRange * t);
+						cp1y = ((canvasHeight - baseHeight) + yRange) - (yRange * t);
+						cp2x = (canvasWidth - xRange) + (xRange * t);
+						cp2y = (canvasHeight - yRange) + (yRange * t);
+					}
+
+					ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+					ctx.beginPath();
+					ctx.moveTo(0, (canvasHeight - baseHeight));
+					// 绘制三次贝塞尔曲线
+					ctx.bezierCurveTo(cp1x, cp1y - 10 > 0 ? cp1y - 10 : 0, cp2x, cp2y - 10 > 0 ? cp2y - 10 : 0, canvasWidth, (
+						canvasHeight - baseHeight));
+					// 绘制圆弧
+					ctx.arc(canvasWidth / 2, canvasHeight, canvasWidth / 2, 0, radians, 0);
+					ctx.fillStyle = "rgba(135, 206, 250, .8)";
+					ctx.fill();
+					ctx.save();
+
+					if (t == 1) {
+						startTime = Date.now();
+						clockwise = !clockwise;
+					}
+
+					requestAnimationFrame(waveDraw);
+				});
+			}
+		}
+	</script>
+</html>
