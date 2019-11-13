@@ -10,12 +10,18 @@ export default class Router extends React.Component {
         }
     }
     static childContextTypes = {
-        location: PropTypes.object
+        location: PropTypes.object,
+        history: PropTypes.object
     }
 
     getChildContext() {
         return {
-            location: this.state.location
+            location: this.state.location,
+            history: {
+                push:(path)=>{
+                    window.location.hash = path
+                }
+            }
         };
     }
 

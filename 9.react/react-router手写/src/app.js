@@ -1,5 +1,5 @@
 import React from 'react'
-import {Router,Route} from '../react-router/index.js'
+import {Router,Route,Link} from '../react-router/index.js'
 
 class A extends React.Component {
     render(){
@@ -27,6 +27,11 @@ export default class App extends React.Component {
     render(){
         return (
             <Router>
+                <div>
+                    <Link to="/a">a</Link>
+                    <Link to="/b">b</Link>
+                    <Link to="/c">c</Link>
+                </div>
                 <div>
                     <Route path="/a" component={A}/>
                     <Route path="/b" component={B}/>

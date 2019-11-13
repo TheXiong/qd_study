@@ -20,3 +20,6 @@
   》类型不同，直接卸载旧dom（包括其子节点），再重新构建新dom进行挂载
   》属性不同，仅更改属性，不重新构建，处理完成后递归更新子节点
   》子节点（可能多个），有key的并且key相同的进行比较（新的没有改key则卸载旧节点，旧的没有就新建节点），没key的顺序比较
+
+6.为什么要在componentDidMount请求数据
+  如果在componentWillMount里面请求数据，那么可能render的时候，数据还没请求回来，render就是按照初始状态进行render的，componentWillMount请求回来数据后也不会重新render或者update。
