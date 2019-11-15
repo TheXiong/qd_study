@@ -1,7 +1,10 @@
 <template>
     <div>
-        aaaaaaaa
+        <router-link to="/foo">foo</router-link>
+        <router-link to="/bar">bar</router-link>
         <router-view></router-view>
+        <button @click="go">前进</button>
+        <button @click="back">后退</button>
     </div>
 </template>
 
@@ -12,6 +15,13 @@ export default {
             
         }
     },
-
+    methods: {
+        go(){
+            this.$router.go(1)
+        },
+        back(){
+            this.$router.back()
+        }
+    },
 }
 </script>

@@ -6,7 +6,8 @@ class History {
 
 class VueRouter {
     constructor(options) {
-        this.mode = options.mode || 'hash'
+        this._Vue = null;
+        this.mode = options.mode || 'has'
         this.routes = options.routes || []
         //将routes变成{'/home':Home,'/about':About}结构
         this.routesMap = this.createRoutesMap(this.routes);
@@ -34,14 +35,19 @@ class VueRouter {
             })
         }
     }
-    go() {
-
+    go(n) {
+        window.history.go(n)
     }
     back() {
-
+        window.history.back()
     }
-    push() {
-
+    push(path) {
+        if (this.mode == 'hash') {
+            window.location.hash = path
+        }else{
+            this.history.current = path;
+            window.history.pushState({},null,path)
+        }
     }
     createRoutesMap(routes) {
         return routes.reduce((map, current) => {
@@ -59,6 +65,8 @@ VueRouter.install = (Vue) => {
             } else {
                 this.$router = this.$parent.$router
             }
+            //收集依赖，current变化时更新相应组件
+            Vue.util.defineReactive(this.$router.history, 'current', null)
         }
     })
 
@@ -66,12 +74,30 @@ VueRouter.install = (Vue) => {
         render(h) {
             let current = this._self.$router.history.current
             let routesMap = this._self.$router.routesMap
-            return h('h1', {}, "首页")
+            return h(routesMap[current])
         },
     })
     Vue.component('router-link', {
+        props: {
+            to:{
+                type: String
+            },
+            tag:{
+                type:String,
+                default:'a'
+            },
+            "active-class":{
+                type: String
+            }
+        },
         render(h) {
-            return h('h1', {}, "首页")
+            return h(this._self.tag, 
+                { on: 
+                    { click: () => { 
+                        this._self.$router.push(this._self.to) 
+                        }
+                    } 
+                }, this._self.$slots.default)
         }
     })
 }
