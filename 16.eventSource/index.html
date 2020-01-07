@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script type="text/javascript">
+
+        window.EventSource1 = function (url) {
+            var xhr;
+            var charsReceived = 0;
+            var aborted = false;
+            var ssesrc = this
+
+            xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                switch (xhr.readyState) {
+                    case 3:
+                        processData()
+                        break;
+                    case 4:
+                        reconnect()
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            connect()
+
+            function connect() {
+                xhr.open("GET", url);
+                xhr.setRequestHeader("Cache-Control", "no-cache")
+                xhr.send()
+            }
+
+            function processData() {
+                if (!type) {
+                    type = xhr.getResponseHeader('Content-Type')
+                    if (type !== 'text/event-stream') {
+                        aborted = true
+                        xhr.abort()
+                        return
+                    }
+
+                    var chunk = xhr.responseText.substring(charsReceived)
+                    charsReceived = xhr.responseText.length
+
+                    var lines = chunk.replace(/(\r\n|\r|\n)$/, "").split(/\r\n/)
+                    var type;
+                    var data;
+                    var id
+                    lines.forEach(line => {
+                        var lineArr = line.split(": ")
+                        var name = lineArr[0];
+                        var value = lineArr[1]
+                        switch (name) {
+                            case "event":
+                                type = value
+                                break;
+                            case "data":
+                                data = value
+                                break;
+                            case "id":
+                                id = value
+                                break;
+                            default:
+                                break;
+                        }
+                    });
+                    ssesrc.onmessage({
+                        id: id,
+                        type: type,
+                        data: data
+                    })
+                }
+            }
+
+            function reconnect() {
+                if (aborted) {
+                    return
+                }
+                setTimeout(connect, 2000);
+            }
+        }
+
+
+
+        var evtSource = new EventSource('http://localhost:5000/es');
+        evtSource.addEventListener('message', function (e) {
+            console.log(e.data);
+        });
+        evtSource.addEventListener('error', function (e) {
+            console.log(e);
+        })
+
+        //ajax模拟eventsource
+        // var evtSource = new EventSource1('http://localhost:5000/es');
+        // evtSource.onmessage = function (e) {
+        //     console.log(e);
+
+        // }
+    </script>
+</body>
+
+</html>
