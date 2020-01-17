@@ -106,6 +106,7 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * Attempt to create an observer instance for a value,
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
+ * 尝试创建observer实例，如果数据已经被observe过了，就返回value.__ob__
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
   if (!isObject(value) || value instanceof VNode) { //如果value不是对象或者value是vnode对象
@@ -181,7 +182,7 @@ export function defineReactive (
     set: function reactiveSetter (newVal) {
       const value = getter ? getter.call(obj) : val
       /* eslint-disable no-self-compare */
-      if (newVal === value || (newVal !== newVal && value !== value)) {
+      if (newVal === value || (newVal !== newVal && value !== value)) { //对比新旧值
         return
       }
       /* eslint-enable no-self-compare */
@@ -189,14 +190,14 @@ export function defineReactive (
         customSetter()
       }
       // #7981: for accessor properties without setter
-      if (getter && !setter) return
+      if (getter && !setter) return //如果属性自定义了getter又没有自定义setter
       if (setter) {
         setter.call(obj, newVal)
       } else {
         val = newVal
       }
-      childOb = !shallow && observe(newVal)
-      dep.notify()
+      childOb = !shallow && observe(newVal) //给属性赋的值是对象，则要observe这个对象
+      dep.notify() //通知更新
     }
   })
 }
