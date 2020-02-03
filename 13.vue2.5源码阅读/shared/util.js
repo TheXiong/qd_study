@@ -22,6 +22,7 @@ export function isFalse (v: any): boolean %checks {
 
 /**
  * Check if value is primitive.
+ * 检查value是简单数据
  */
 export function isPrimitive (value: any): boolean %checks {
   return (
@@ -141,6 +142,7 @@ export function hasOwn (obj: Object | Array<*>, key: string): boolean {
 
 /**
  * Create a cached version of a pure function.
+ * 缓存纯函数
  */
 export function cached<F: Function> (fn: F): F {
   const cache = Object.create(null)
@@ -274,6 +276,14 @@ export function genStaticKeys (modules: Array<ModuleOptions>): string {
  * Check if two values are loosely equal - that is,
  * if they are plain objects, do they have the same shape?
  */
+/**
+  判断两个对象相等
+  算法描述：
+  1.假定对象a和b
+  2.遍历a中的成员，判断每一个a中的成员都在b中，并且与b中成员相等
+  3.再遍历b中成员，判断每一个b中成员是否都在a中，并且与a中成员相等
+  4.如果成员是引用类型，则递归
+ */
 export function looseEqual (a: any, b: any): boolean {
   if (a === b) return true
   const isObjectA = isObject(a)
@@ -323,6 +333,7 @@ export function looseIndexOf (arr: Array<mixed>, val: mixed): number {
 
 /**
  * Ensure a function is called only once.
+ * 让一个函数只调用一次
  */
 export function once (fn: Function): Function {
   let called = false

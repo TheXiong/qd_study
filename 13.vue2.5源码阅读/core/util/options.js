@@ -408,8 +408,8 @@ export function mergeOptions (
       mergeField(key)
     }
   }
-  function mergeField (key) {
-    const strat = strats[key] || defaultStrat
+  function mergeField (key) { 
+    const strat = strats[key] || defaultStrat //data、props、methods、生命周期等的合并策略不同
     options[key] = strat(parent[key], child[key], vm, key)
   }
   return options

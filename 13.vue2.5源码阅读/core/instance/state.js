@@ -164,6 +164,8 @@ function initData (vm: Component) {
 
 export function getData (data: Function, vm: Component): any {
   // #7573 disable dep collection when invoking data getters
+  //此时是vue的初始化，还没进行到渲染，不需要进行依赖收集
+  //pushTarget传入空，就能将全局的watch的target设为undefined
   pushTarget()
   try {
     return data.call(vm, vm)
@@ -186,7 +188,7 @@ function initComputed (vm: Component, computed: Object) {
 
   for (const key in computed) {
     const userDef = computed[key]
-    const getter = typeof userDef === 'function' ? userDef : userDef.get //computed有两种写法
+    const getter = typeof userDef === 'function' ? userDef : userDef.get //computed有两种写法，第二种是自定义get
     if (process.env.NODE_ENV !== 'production' && getter == null) {
       warn(
         `Getter is missing for computed property "${key}".`,

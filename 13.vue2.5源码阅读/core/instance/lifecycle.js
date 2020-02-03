@@ -29,10 +29,11 @@ export function setActiveInstance(vm: Component) {
   }
 }
 
-export function initLifecycle (vm: Component) {
+export function initLifecycle (vm: Component) { //把组件实例里面用到的常用属性初始化
   const options = vm.$options
 
   // locate first non-abstract parent
+  //建立父子组件的关系
   let parent = options.parent
   if (parent && !options.abstract) {
     while (parent.$options.abstract && parent.$parent) {
@@ -61,7 +62,7 @@ export function lifecycleMixin (Vue: Class<Component>) {
     const prevEl = vm.$el
     const prevVnode = vm._vnode
     const restoreActiveInstance = setActiveInstance(vm)
-    vm._vnode = vnode
+    vm._vnode = vnode //_vnode是当前组件渲染的vnode，$vnode是父vnode
     // Vue.prototype.__patch__ is injected in entry points
     // based on the rendering backend used.
     if (!prevVnode) {
@@ -199,7 +200,7 @@ export function mountComponent (
   // since the watcher's initial patch may call $forceUpdate (e.g. inside child
   // component's mounted hook), which relies on vm._watcher being already defined
   new Watcher(vm, updateComponent, noop, {
-    before () {
+    before () { //批量更新前会调用
       if (vm._isMounted && !vm._isDestroyed) {
         callHook(vm, 'beforeUpdate')
       }
@@ -209,7 +210,7 @@ export function mountComponent (
 
   // manually mounted instance, call mounted on self
   // mounted is called for render-created child components in its inserted hook
-  if (vm.$vnode == null) { //没有父vnode则是根vnode
+  if (vm.$vnode == null) { //没有父vnode则是根vnode，$vnode在_render函数里面添加
     vm._isMounted = true
     callHook(vm, 'mounted')
   }

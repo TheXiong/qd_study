@@ -144,7 +144,7 @@ export function parse (
         element = preTransforms[i](element, options) || element
       }
 
-      if (!inVPre) {
+      if (!inVPre) { //解析v-pre
         processPre(element)
         if (element.pre) {
           inVPre = true
@@ -157,9 +157,9 @@ export function parse (
         processRawAttrs(element)
       } else if (!element.processed) {
         // structural directives
-        processFor(element)
-        processIf(element)
-        processOnce(element)
+        processFor(element) //解析v-for
+        processIf(element) //解析v-if
+        processOnce(element) //解析v-once
         // element-scope stuff
         processElement(element, options)
       }

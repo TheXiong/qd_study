@@ -24,6 +24,7 @@ const SIMPLE_NORMALIZE = 1
 const ALWAYS_NORMALIZE = 2
 
 // wrapper function for providing a more flexible interface
+//wrapper函数提供了一个更加灵活的接口
 // without getting yelled at by flow
 export function createElement (
   context: Component,
@@ -55,7 +56,8 @@ export function createElement (
   //   _compiled: true
   //   __proto__: Object
   // }
-  if (Array.isArray(data) || isPrimitive(data)) {
+  if (Array.isArray(data) || isPrimitive(data)) { //data是数组或简单数据(string\number\symbol\boolean)
+    //此时data不是数据，而是children
     normalizationType = children
     children = data
     data = undefined
@@ -73,7 +75,7 @@ export function _createElement (
   children?: any,
   normalizationType?: number
 ): VNode | Array<VNode> {
-  if (isDef(data) && isDef((data: any).__ob__)) {
+  if (isDef(data) && isDef((data: any).__ob__)) { //不能用observed data作为vnode的data
     process.env.NODE_ENV !== 'production' && warn(
       `Avoid using observed data object as vnode data: ${JSON.stringify(data)}\n` +
       'Always create fresh vnode data objects in each render!',
@@ -92,7 +94,7 @@ export function _createElement (
   // warn against non-primitive key
   if (process.env.NODE_ENV !== 'production' &&
     isDef(data) && isDef(data.key) && !isPrimitive(data.key)
-  ) {
+  ) { //key必须是string或number
     if (!__WEEX__ || !('@binding' in data.key)) {
       warn(
         'Avoid using non-primitive value as key, ' +
@@ -110,10 +112,10 @@ export function _createElement (
     data.scopedSlots = { default: children[0] }
     children.length = 0
   }
-  //flatten复杂的children
-  if (normalizationType === ALWAYS_NORMALIZE) {
+  //flatten复杂的children，使其成为一维数组
+  if (normalizationType === ALWAYS_NORMALIZE) { //模板编译人的人render会走ALWAYS_NORMALIZE
     children = normalizeChildren(children)
-  } else if (normalizationType === SIMPLE_NORMALIZE) {
+  } else if (normalizationType === SIMPLE_NORMALIZE) { //自己手写render会走SIMPLE_NORMALIZE
     children = simpleNormalizeChildren(children)
   }
   let vnode, ns
@@ -134,6 +136,7 @@ export function _createElement (
       // unknown or unlisted namespaced elements
       // check at runtime because it may get assigned a namespace when its
       // parent normalizes children
+      //不认识的tag
       vnode = new VNode(
         tag, data, children,
         undefined, undefined, context
@@ -146,7 +149,7 @@ export function _createElement (
   if (Array.isArray(vnode)) {
     return vnode
   } else if (isDef(vnode)) {
-    if (isDef(ns)) applyNS(vnode, ns)
+    if (isDef(ns)) applyNS(vnode, ns) //svg
     if (isDef(data)) registerDeepBindings(data)
     return vnode
   } else {

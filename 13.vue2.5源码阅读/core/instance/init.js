@@ -45,13 +45,13 @@ export function initMixin (Vue: Class<Component>) {
     if (process.env.NODE_ENV !== 'production') {
       initProxy(vm)
     } else {
-      vm._renderProxy = vm
+      vm._renderProxy = vm //_renderProxy会在_render方法里面使用
     }
     // expose real self
     vm._self = vm
-    initLifecycle(vm)
-    initEvents(vm)
-    initRender(vm)
+    initLifecycle(vm) //把组件实例里面用到的常用属性初始化
+    initEvents(vm) //在组件里面监听父组件传入的事件，emit的时候直接调用
+    initRender(vm) //给vm上挂载_c\$createElement方法，$attrs\$listeners属性并添加响应式
     callHook(vm, 'beforeCreate')
     initInjections(vm) // inject，provider/inject类似于react的provider/consumer
     initState(vm)
@@ -95,12 +95,12 @@ export function resolveConstructorOptions (Ctor: Class<Component>) {
   if (Ctor.super) {
     const superOptions = resolveConstructorOptions(Ctor.super)
     const cachedSuperOptions = Ctor.superOptions
-    if (superOptions !== cachedSuperOptions) {
+    if (superOptions !== cachedSuperOptions) { //super options改变或还没有缓存
       // super option changed,
       // need to resolve new options.
       Ctor.superOptions = superOptions
       // check if there are any late-modified/attached options (#4976)
-      const modifiedOptions = resolveModifiedOptions(Ctor)
+      const modifiedOptions = resolveModifiedOptions(Ctor) //解析改变了的options
       // update base extend options
       if (modifiedOptions) {
         extend(Ctor.extendOptions, modifiedOptions)

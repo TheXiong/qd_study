@@ -27,7 +27,20 @@ export let shouldObserve: boolean = true
 export function toggleObserving (value: boolean) {
   shouldObserve = value
 }
-
+/**
+ data:{
+   a:{
+     b:{}
+   }
+ }
+ ============
+ data:{
+   a:{
+    __ob__:Observer
+   },
+   __ob__:Observer //不可枚举
+ }
+ */
 /**
  * Observer class that is attached to each observed
  * object. Once attached, the observer converts the target
@@ -43,9 +56,9 @@ export class Observer {
     this.value = value
     this.dep = new Dep()
     this.vmCount = 0
-    def(value, '__ob__', this)
+    def(value, '__ob__', this) //第四个参数（是否可枚举）未传，下面在遍历value时就获取不到__ob__
     if (Array.isArray(value)) {
-      if (hasProto) {
+      if (hasProto) { //判断对象有没有__proto__属性
         protoAugment(value, arrayMethods)
       } else {
         copyAugment(value, arrayMethods, arrayKeys)
@@ -83,6 +96,7 @@ export class Observer {
 /**
  * Augment a target Object or Array by intercepting
  * the prototype chain using __proto__
+ * 直接赋值到__proto__
  */
 function protoAugment (target, src: Object) {
   /* eslint-disable no-proto */
@@ -93,6 +107,7 @@ function protoAugment (target, src: Object) {
 /**
  * Augment a target Object or Array by defining
  * hidden properties.
+ * 将重写的数组方法挂载到当前数组对象上，而不是访问数组原型上的方法
  */
 /* istanbul ignore next */
 function copyAugment (target: Object, src: Object, keys: Array<string>) {
@@ -107,12 +122,14 @@ function copyAugment (target: Object, src: Object, keys: Array<string>) {
  * returns the new observer if successfully observed,
  * or the existing observer if the value already has one.
  * 尝试创建observer实例，如果数据已经被observe过了，就返回value.__ob__
+ * 用于观测一个数据
  */
 export function observe (value: any, asRootData: ?boolean): Observer | void {
   if (!isObject(value) || value instanceof VNode) { //如果value不是对象或者value是vnode对象
     return
   }
   let ob: Observer | void
+  // 如果数据上已有__ob__属性, 说明该数据已经被观测, 不再重复处理
   if (hasOwn(value, '__ob__') && value.__ob__ instanceof Observer) {
     ob = value.__ob__ //如果value已经有Observer对象
   } else if (
@@ -140,7 +157,8 @@ export function defineReactive (
   customSetter?: ?Function,
   shallow?: boolean
 ) {
-  const dep = new Dep()
+  // 生成一个新的Dep实例,这个实例会被闭包到getter和setter中
+  const dep = new Dep() //dep简单认为是装watcher的容器
   
   const property = Object.getOwnPropertyDescriptor(obj, key)
   //   o = { get foo() { return 17; } };
@@ -154,7 +172,7 @@ export function defineReactive (
   if (property && property.configurable === false) { //如果已经定义了该属性不可配置
     return
   }
-  //如果该属性里面定义了get和set
+  //如果用户自定义了getter、setter
   // cater for pre-defined getter/setters
   const getter = property && property.get
   const setter = property && property.set
@@ -169,7 +187,18 @@ export function defineReactive (
     get: function reactiveGetter () {
       const value = getter ? getter.call(obj) : val
       if (Dep.target) { //Dep.target是全局变量，用来存储当前正在建立依赖的watcher
-        dep.depend() //用来建立dephewatcher之间的对应关系
+        dep.depend() //用来建立dep与watcher之间的对应关系
+        /**
+         data:{
+           a:{
+             b:{}
+             __ob__:Observer
+           },
+           __ob__:Observer
+         }
+         ==========
+         a收集依赖时，b也要收集，这样b改变时才能触发更新，但是a只与b有此关系，与b下面没关系，意思只是一层
+         */
         if (childOb) {
           childOb.dep.depend()
           if (Array.isArray(value)) {
@@ -182,7 +211,7 @@ export function defineReactive (
     set: function reactiveSetter (newVal) {
       const value = getter ? getter.call(obj) : val
       /* eslint-disable no-self-compare */
-      if (newVal === value || (newVal !== newVal && value !== value)) { //对比新旧值
+      if (newVal === value || (newVal !== newVal && value !== value)) { //对比新旧值，后面是判断NaN的情况
         return
       }
       /* eslint-enable no-self-compare */

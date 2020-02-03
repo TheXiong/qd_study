@@ -46,8 +46,8 @@ const componentVNodeHooks = {
     } else {
       const child = vnode.componentInstance = createComponentInstanceForVnode(
         vnode,
-        activeInstance
-      )
+        activeInstance //当前组件vm实例
+      ) //返回子组件vm实例
       child.$mount(hydrating ? vnode.elm : undefined, hydrating)
     }
   },
@@ -207,13 +207,14 @@ export function createComponent (
 }
 
 export function createComponentInstanceForVnode (
-  vnode: any, // we know it's MountedComponentVNode but flow doesn't
-  parent: any, // activeInstance in lifecycle state
+  vnode: any, // we know it's MountedComponentVNode but flow doesn't当前正在渲染的vnode
+  parent: any, // activeInstance in lifecycle state是当前正在渲染的vm实例
 ): Component {
   const options: InternalComponentOptions = {
     _isComponent: true,
-    _parentVnode: vnode,
-    parent
+    _parentVnode: vnode, 
+    //记录当前vnode（目的是子组件访问父vnode的东西），在init合并参数那儿会解析vnode的一些参数，合并到子组件，会赋值在render给子组件$vnode属性
+    parent //先记录当前vm实例到options，new子组件实例的时候会在initLifecycle里面建立父子组件关系，给子组件挂载$parent属性
   }
   // check inline-template render functions
   const inlineTemplate = vnode.data.inlineTemplate

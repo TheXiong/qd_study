@@ -26,20 +26,22 @@ let uid = 0
 export default class Watcher {
   vm: Component;
   expression: string;
-  cb: Function;
+  cb: Function; //所依赖值改变触发回调回调
   id: number;
   deep: boolean;
-  user: boolean;
-  lazy: boolean;
-  sync: boolean;
-  dirty: boolean;
+  user: boolean; //用来标志是watch，渲染watcher为false
+  lazy: boolean; //
+  sync: boolean; //同步更新，不会之后再批量更新
+  dirty: boolean; //如果是lazy，dirty才有意义，如果dirty为true则组件应该更新
   active: boolean;
+
   deps: Array<Dep>;
   newDeps: Array<Dep>;
   depIds: SimpleSet;
   newDepIds: SimpleSet;
-  before: ?Function;
-  getter: Function;
+
+  before: ?Function; //批量更新前会调用（scheduler.js）
+  getter: Function; //触发函数收集依赖，可以是组件更新函数\computed函数,调用都会收集依赖
   value: any;
 
   constructor (
@@ -76,9 +78,9 @@ export default class Watcher {
       ? expOrFn.toString()
       : ''
     // parse expression for getter
-    if (typeof expOrFn === 'function') { //计算属性会走这
+    if (typeof expOrFn === 'function') { //updateComponent更新组件函数，计算属性会走这
       this.getter = expOrFn
-    } else {
+    } else { //监听属性
       this.getter = parsePath(expOrFn) //返回一个函数
       if (!this.getter) {
         this.getter = noop
@@ -114,10 +116,10 @@ export default class Watcher {
       // "touch" every property so they are all tracked as
       // dependencies for deep watching
       if (this.deep) {
-        traverse(value)
+        traverse(value) //遍历value---deep收集依赖
       }
       popTarget() //释放建立完依赖的watcher
-      this.cleanupDeps()
+      this.cleanupDeps() //移除dep多余watcher ------ 之前依赖，现在不依赖的watcher
     }
     return value
   }
@@ -127,11 +129,11 @@ export default class Watcher {
    */
   addDep (dep: Dep) {
     const id = dep.id
-    if (!this.newDepIds.has(id)) {
-      this.newDepIds.add(id)
+    if (!this.newDepIds.has(id)) { //新的newDepIds没有该dep----现在还没有收集
+      this.newDepIds.add(id) 
       this.newDeps.push(dep)
-      if (!this.depIds.has(id)) {
-        dep.addSub(this)
+      if (!this.depIds.has(id)) { //原depIds里面没有该id-----原来没有收集
+        dep.addSub(this) //dep里面没有此watcher
       }
     }
   }
@@ -141,19 +143,19 @@ export default class Watcher {
    */
   cleanupDeps () {
     let i = this.deps.length
-    while (i--) {
+    while (i--) { //循环旧deps
       const dep = this.deps[i]
-      if (!this.newDepIds.has(dep.id)) { //新的deps里面没有
-        dep.removeSub(this) //移除
+      if (!this.newDepIds.has(dep.id)) { //旧deps里面有，新的deps里面没有
+        dep.removeSub(this) //移除dep里面该watcher
       }
     }
     let tmp = this.depIds
-    this.depIds = this.newDepIds
+    this.depIds = this.newDepIds //newDepIds替换depIds
     this.newDepIds = tmp
-    this.newDepIds.clear()
+    this.newDepIds.clear() //清空
     tmp = this.deps
-    this.deps = this.newDeps
-    this.newDeps = tmp
+    this.deps = this.newDeps //newDeps替换deps
+    this.newDeps = tmp 
     this.newDeps.length = 0
   }
 
@@ -192,7 +194,7 @@ export default class Watcher {
         this.value = value
         if (this.user) { //用户watcher，监听属性
           try {
-            this.cb.call(this.vm, value, oldValue)
+            this.cb.call(this.vm, value, oldValue) //watch的回调会走这，监听值改变回调
           } catch (e) {
             handleError(e, this.vm, `callback for watcher "${this.expression}"`)
           }

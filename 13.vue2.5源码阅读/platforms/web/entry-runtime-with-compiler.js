@@ -1,5 +1,9 @@
 /* @flow */
 
+
+/**
+ * 此文件主要目的是用来拓展$mount方法的，在拓展的$mount方法里面会调用原来的$mount
+ */
 import config from 'core/config'
 import { warn, cached } from 'core/util/index'
 import { mark, measure } from 'core/util/perf'

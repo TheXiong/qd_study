@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>{{message}}</div>
-    <Son />
+    <Son :a="a"/>
   </div>
 </template>
 
@@ -12,7 +12,13 @@ export default {
   components: { Son },
   data() {
     return {
-      message: "hello vue"
+      message: "hello vue",
+      a:{
+        b:{
+          c:1
+        },
+        d:[1,2]
+      }
     };
   }
 };

@@ -82,7 +82,7 @@ if (process.env.NODE_ENV !== 'production') {
       const handlers = options.render && options.render._withStripped
         ? getHandler
         : hasHandler
-      vm._renderProxy = new Proxy(vm, handlers)
+      vm._renderProxy = new Proxy(vm, handlers) //做了劫持，在_render里面调用，会验证通过vm访问属性或方法时，该属性或方法有没有定义
     } else {
       vm._renderProxy = vm
     }
