@@ -37,7 +37,7 @@ export function parseText (
       tokens.push(JSON.stringify(tokenValue))
     }
     // tag token
-    const exp = parseFilters(match[1].trim())
+    const exp = parseFilters(match[1].trim()) //解析过滤器
     tokens.push(`_s(${exp})`)
     rawTokens.push({ '@binding': exp })
     lastIndex = index + match[0].length

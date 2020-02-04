@@ -25,6 +25,11 @@ function flushCallbacks () {
 // when state is changed right before repaint (e.g. #6813, out-in transitions).
 // Here we use microtask by default, but expose a way to force (macro) task when
 // needed (e.g. in event handlers attached by v-on).
+//我们通过微任务和宏任务形成异步延迟的wrapper
+//在<2.4，我们在任何地方都使用微任务,但是会出现一些视觉问题---微任务优先级太高会与顺序事件发生冲突
+//甚至和相似事件的冒泡发生冲突
+//然而，在任何地方使用宏任务也有微妙的问题----当在重绘之前更改状态时
+//我们默认使用微任务，但是暴露了一个可以强制使用宏任务的方法
 let microTimerFunc //微任务
 let macroTimerFunc //宏任务
 let useMacroTask = false

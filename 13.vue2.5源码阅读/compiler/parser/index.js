@@ -62,8 +62,8 @@ export function createASTElement (
  * Convert HTML string to AST.
  */
 export function parse (
-  template: string,
-  options: CompilerOptions
+  template: string, //模板字符串
+  options: CompilerOptions //和平台相关的配置
 ): ASTElement | void {
   warn = options.warn || baseWarn
 
@@ -71,6 +71,7 @@ export function parse (
   platformMustUseProp = options.mustUseProp || no
   platformGetTagNamespace = options.getTagNamespace || no
 
+  //从options里面解析函数与配置
   transforms = pluckModuleFunction(options.modules, 'transformNode')
   preTransforms = pluckModuleFunction(options.modules, 'preTransformNode')
   postTransforms = pluckModuleFunction(options.modules, 'postTransformNode')
@@ -114,7 +115,7 @@ export function parse (
     shouldDecodeNewlines: options.shouldDecodeNewlines,
     shouldDecodeNewlinesForHref: options.shouldDecodeNewlinesForHref,
     shouldKeepComment: options.comments,
-    start (tag, attrs, unary) {
+    start (tag, attrs, unary) { //处理开始标签解析出的东西，创建ast，，根据解析出的东西给ast挂载一些属性
       // check namespace.
       // inherit parent ns if there is one
       const ns = (currentParent && currentParent.ns) || platformGetTagNamespace(tag)
@@ -130,8 +131,8 @@ export function parse (
         element.ns = ns
       }
 
-      if (isForbiddenTag(element) && !isServerRendering()) {
-        element.forbidden = true
+      if (isForbiddenTag(element) && !isServerRendering()) { //是script、style标签&&是服务端渲染
+        element.forbidden = true //ast挂载forbidden
         process.env.NODE_ENV !== 'production' && warn(
           'Templates should only be responsible for mapping the state to the ' +
           'UI. Avoid placing tags with side-effects in your templates, such as ' +
@@ -153,7 +154,7 @@ export function parse (
       if (platformIsPreTag(element.tag)) {
         inPre = true
       }
-      if (inVPre) {
+      if (inVPre) { //有v-pre时逻辑不一样
         processRawAttrs(element)
       } else if (!element.processed) {
         // structural directives
@@ -184,8 +185,8 @@ export function parse (
       // tree management
       if (!root) {
         root = element
-        checkRootConstraints(root)
-      } else if (!stack.length) {
+        checkRootConstraints(root) //检查根节点约束，tag不能是slot、template，属性不能包含v-for
+      } else if (!stack.length) { //stack.length为0，说明是组件根节点
         // allow root elements with v-if, v-else-if and v-else
         if (root.if && (element.elseif || element.else)) {
           checkRootConstraints(element)
@@ -201,7 +202,7 @@ export function parse (
           )
         }
       }
-      if (currentParent && !element.forbidden) {
+      if (currentParent && !element.forbidden) { //第一次没有
         if (element.elseif || element.else) {
           processIfConditions(element, currentParent)
         } else if (element.slotScope) { // scoped slot
@@ -209,11 +210,11 @@ export function parse (
           const name = element.slotTarget || '"default"'
           ;(currentParent.scopedSlots || (currentParent.scopedSlots = {}))[name] = element
         } else {
-          currentParent.children.push(element)
+          currentParent.children.push(element) //往父ast的children里面push子ast
           element.parent = currentParent
         }
       }
-      if (!unary) {
+      if (!unary) { //不是单标签元素
         currentParent = element
         stack.push(element)
       } else {
@@ -221,7 +222,7 @@ export function parse (
       }
     },
 
-    end () {
+    end () { //处理结束标签
       // remove trailing whitespace
       const element = stack[stack.length - 1]
       const lastNode = element.children[element.children.length - 1]
@@ -230,18 +231,18 @@ export function parse (
       }
       // pop stack
       stack.length -= 1
-      currentParent = stack[stack.length - 1]
+      currentParent = stack[stack.length - 1] //将currentParent指向外面一层
       closeElement(element)
     },
 
-    chars (text: string) {
+    chars (text: string) { //处理文本，创建文本ast节点
       if (!currentParent) {
         if (process.env.NODE_ENV !== 'production') {
-          if (text === template) {
+          if (text === template) { //text定义在template里面
             warnOnce(
               'Component template requires a root element, rather than just text.'
             )
-          } else if ((text = text.trim())) {
+          } else if ((text = text.trim())) { //text定义在根节点之外
             warnOnce(
               `text "${text}" outside root element will be ignored.`
             )
@@ -264,15 +265,15 @@ export function parse (
         : preserveWhitespace && children.length ? ' ' : ''
       if (text) {
         let res
-        if (!inVPre && text !== ' ' && (res = parseText(text, delimiters))) {
-          children.push({
+        if (!inVPre && text !== ' ' && (res = parseText(text, delimiters))) { //parseText解析文本里面{{}}
+          children.push({ //表达式ast
             type: 2,
             expression: res.expression,
             tokens: res.tokens,
             text
           })
         } else if (text !== ' ' || !children.length || children[children.length - 1].text !== ' ') {
-          children.push({
+          children.push({ //文本ast
             type: 3,
             text
           })
@@ -287,7 +288,8 @@ export function parse (
       })
     }
   })
-  return root
+
+  return root //返回ast的根节点
 }
 
 function processPre (el) {
@@ -363,7 +365,7 @@ export function processFor (el: ASTElement) {
   if ((exp = getAndRemoveAttr(el, 'v-for'))) {
     const res = parseFor(exp)
     if (res) {
-      extend(el, res)
+      extend(el, res) //属性拓展到ast上
     } else if (process.env.NODE_ENV !== 'production') {
       warn(
         `Invalid v-for expression: ${exp}`
@@ -380,15 +382,15 @@ type ForParseResult = {
 };
 
 export function parseFor (exp: string): ?ForParseResult {
-  const inMatch = exp.match(forAliasRE)
+  const inMatch = exp.match(forAliasRE) //对v-for后面的值进行正则match，match出各个部分，例如（items,index）in lists
   if (!inMatch) return
   const res = {}
-  res.for = inMatch[2].trim()
-  const alias = inMatch[1].trim().replace(stripParensRE, '')
+  res.for = inMatch[2].trim() //lists
+  const alias = inMatch[1].trim().replace(stripParensRE, '') //items，index
   const iteratorMatch = alias.match(forIteratorRE)
   if (iteratorMatch) {
-    res.alias = alias.replace(forIteratorRE, '').trim()
-    res.iterator1 = iteratorMatch[1].trim()
+    res.alias = alias.replace(forIteratorRE, '').trim() //items
+    res.iterator1 = iteratorMatch[1].trim() //index
     if (iteratorMatch[2]) {
       res.iterator2 = iteratorMatch[2].trim()
     }
@@ -399,13 +401,13 @@ export function parseFor (exp: string): ?ForParseResult {
 }
 
 function processIf (el) {
-  const exp = getAndRemoveAttr(el, 'v-if')
+  const exp = getAndRemoveAttr(el, 'v-if') //例如v-if="isShow"
   if (exp) {
-    el.if = exp
+    el.if = exp //ast的if属性指向isShow
     addIfCondition(el, {
       exp: exp,
       block: el
-    })
+    }) //el.ifConditions = (el.ifConditions || []).push({exp: exp,block: el})
   } else {
     if (getAndRemoveAttr(el, 'v-else') != null) {
       el.else = true
