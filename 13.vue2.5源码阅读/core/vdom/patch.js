@@ -452,18 +452,18 @@ export function createPatchFunction (backend) {
       } else {
         //此次对比不可优化的时候
         if (isUndef(oldKeyToIdx)) oldKeyToIdx = createKeyToOldIdx(oldCh, oldStartIdx, oldEndIdx)
-        idxInOld = isDef(newStartVnode.key)
+        idxInOld = isDef(newStartVnode.key) //当前对比的child的key在旧oldCh列表中的下标
           ? oldKeyToIdx[newStartVnode.key]
           : findIdxInOld(newStartVnode, oldCh, oldStartIdx, oldEndIdx)
-        if (isUndef(idxInOld)) { // New element
+        if (isUndef(idxInOld)) { // New element，说明是新创建的
           createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
-        } else {
+        } else { //能找到相同key的元素
           vnodeToMove = oldCh[idxInOld]
-          if (sameVnode(vnodeToMove, newStartVnode)) {
-            patchVnode(vnodeToMove, newStartVnode, insertedVnodeQueue, newCh, newStartIdx)
+          if (sameVnode(vnodeToMove, newStartVnode)) { //相同key并且是相同的元素
+            patchVnode(vnodeToMove, newStartVnode, insertedVnodeQueue, newCh, newStartIdx) //执行更新
             oldCh[idxInOld] = undefined
             canMove && nodeOps.insertBefore(parentElm, vnodeToMove.elm, oldStartVnode.elm)
-          } else {
+          } else { //相同key但是是不同的元素了，认为是新的元素
             // same key but different element. treat as new element
             createElm(newStartVnode, insertedVnodeQueue, parentElm, oldStartVnode.elm, false, newCh, newStartIdx)
           }
