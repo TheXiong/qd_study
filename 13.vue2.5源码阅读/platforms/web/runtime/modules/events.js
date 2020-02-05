@@ -44,7 +44,7 @@ function add (
   capture: boolean,
   passive: boolean
 ) {
-  handler = withMacroTask(handler)
+  handler = withMacroTask(handler) //使用宏任务包装
   target.addEventListener(
     event,
     handler,

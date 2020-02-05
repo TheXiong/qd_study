@@ -51,7 +51,7 @@ export function addHandler (
   modifiers: ?ASTModifiers,
   important?: boolean,
   warn?: Function
-) {
+) { //在ast上添加event或nativeEvents属性
   modifiers = modifiers || emptyObject
   // warn prevent and passive modifier
   /* istanbul ignore if */
@@ -95,7 +95,7 @@ export function addHandler (
   let events
   if (modifiers.native) {
     delete modifiers.native
-    events = el.nativeEvents || (el.nativeEvents = {})
+    events = el.nativeEvents || (el.nativeEvents = {}) //event会引用el.nativeEvents
   } else {
     events = el.events || (el.events = {})
   }
@@ -109,7 +109,7 @@ export function addHandler (
 
   const handlers = events[name]
   /* istanbul ignore if */
-  if (Array.isArray(handlers)) {
+  if (Array.isArray(handlers)) { //important标识新添加的handler放在前面还是放在后面
     important ? handlers.unshift(newHandler) : handlers.push(newHandler)
   } else if (handlers) {
     events[name] = important ? [newHandler, handlers] : [handlers, newHandler]

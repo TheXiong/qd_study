@@ -13,8 +13,8 @@ export function initEvents (vm: Component) {
   vm._events = Object.create(null)
   vm._hasHookEvent = false //是否有父组件绑定在当前组件上的事件
   // init parent attached events
-  const listeners = vm.$options._parentListeners //父组件绑定在当前组件上的事件
-  //_parentListeners在哪儿赋的值？？？？？
+  const listeners = vm.$options._parentListeners //父组件传入的自定义事件
+  //_parentListeners在init里面initInternalComponent赋值
   if (listeners) {
     updateComponentListeners(vm, listeners)
   }

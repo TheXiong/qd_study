@@ -527,25 +527,26 @@ function processComponent (el) {
 function processAttrs (el) {
   const list = el.attrsList
   let i, l, name, rawName, value, modifiers, isProp
-  for (i = 0, l = list.length; i < l; i++) {
+  for (i = 0, l = list.length; i < l; i++) { //遍历attrs
     name = rawName = list[i].name
     value = list[i].value
-    if (dirRE.test(name)) {
+    if (dirRE.test(name)) { //指令检测v-、@、:
       // mark element as dynamic
       el.hasBindings = true
       // modifiers
-      modifiers = parseModifiers(name)
+      modifiers = parseModifiers(name) //解析指令修饰符.，例如.native、.prevent
+      //modifiers ==> {native:true,prevent:true}
       if (modifiers) {
-        name = name.replace(modifierRE, '')
+        name = name.replace(modifierRE, '') //把修饰符部分去掉
       }
-      if (bindRE.test(name)) { // v-bind
-        name = name.replace(bindRE, '')
-        value = parseFilters(value)
+      if (bindRE.test(name)) { // 检测v-bind:、:
+        name = name.replace(bindRE, '') //将v-bind:或:去掉
+        value = parseFilters(value) //解析过滤器
         isProp = false
         if (
           process.env.NODE_ENV !== 'production' &&
           value.trim().length === 0
-        ) {
+        ) { //value为空
           warn(
             `The value for a v-bind expression cannot be empty. Found in "v-bind:${name}"`
           )
@@ -574,8 +575,8 @@ function processAttrs (el) {
         } else {
           addAttr(el, name, value)
         }
-      } else if (onRE.test(name)) { // v-on
-        name = name.replace(onRE, '')
+      } else if (onRE.test(name)) { // 检测v-on,@
+        name = name.replace(onRE, '') //把v-on,@去掉
         addHandler(el, name, value, modifiers, false, warn)
       } else { // normal directives
         name = name.replace(dirRE, '')

@@ -54,7 +54,7 @@ export function initRender (vm: Component) {
 
 export function renderMixin (Vue: Class<Component>) {
   // install runtime convenience helpers
-  installRenderHelpers(Vue.prototype)
+  installRenderHelpers(Vue.prototype) //给vue挂载模板编译生成的render函数里面要用到的函数（类似_c）
 
   Vue.prototype.$nextTick = function (fn: Function) {
     return nextTick(fn, this)

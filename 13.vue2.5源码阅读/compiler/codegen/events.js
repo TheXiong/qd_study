@@ -92,10 +92,10 @@ function genHandler (
     return `[${handler.map(handler => genHandler(name, handler)).join(',')}]`
   }
 
-  const isMethodPath = simplePathRE.test(handler.value)
-  const isFunctionExpression = fnExpRE.test(handler.value)
+  const isMethodPath = simplePathRE.test(handler.value) //a.b a['b'] a["b"] a[0] a[b]
+  const isFunctionExpression = fnExpRE.test(handler.value) //匹配es5函数、es6箭头函数
 
-  if (!handler.modifiers) {
+  if (!handler.modifiers) { //没有修饰符.native之类的
     if (isMethodPath || isFunctionExpression) {
       return handler.value
     }
@@ -103,13 +103,13 @@ function genHandler (
     if (__WEEX__ && handler.params) {
       return genWeexHandler(handler.params, handler.value)
     }
-    return `function($event){${handler.value}}` // inline statement
+    return `function($event){${handler.value}}` // inline statement,@click="handleClick($event)"
   } else {
     let code = ''
     let genModifierCode = ''
     const keys = []
     for (const key in handler.modifiers) {
-      if (modifierCode[key]) {
+      if (modifierCode[key]) { //modifierCode一些常用修饰符
         genModifierCode += modifierCode[key]
         // left/right
         if (keyCodes[key]) {

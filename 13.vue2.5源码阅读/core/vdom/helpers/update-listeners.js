@@ -51,9 +51,9 @@ export function createFnInvoker (fns: Function | Array<Function>): Function {
 export function updateListeners (
   on: Object, //listeners
   oldOn: Object, //老的listeners
-  add: Function, //绑定事件函数
-  remove: Function, //移除事件函数
-  createOnceHandler: Function, 
+  add: Function, //绑定事件函数，native事件与自定义事件add不同
+  remove: Function, //移除事件函数，native事件与自定义事件remove不同
+  createOnceHandler: Function, //执行一次事件函数，native事件与自定义事件createOnceHandler不同
   vm: Component
 ) {
   let name, def, cur, old, event

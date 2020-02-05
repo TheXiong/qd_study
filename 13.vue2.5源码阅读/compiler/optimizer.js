@@ -50,12 +50,12 @@ function markStatic (node: ASTNode) {
     }
     for (let i = 0, l = node.children.length; i < l; i++) {
       const child = node.children[i]
-      markStatic(child)
-      if (!child.static) {
-        node.static = false
+      markStatic(child) //递归
+      if (!child.static) { //如果子节点是静态的
+        node.static = false //当前节点也标记成静态
       }
     }
-    if (node.ifConditions) {
+    if (node.ifConditions) { //ifConditions是处理v-if添加的属性
       for (let i = 1, l = node.ifConditions.length; i < l; i++) {
         const block = node.ifConditions[i].block
         markStatic(block)
