@@ -33,7 +33,7 @@ const directive = {
       el._vOptions = [].map.call(el.options, getValue)
     } else if (vnode.tag === 'textarea' || isTextInputType(el.type)) {
       el._vModifiers = binding.modifiers
-      if (!binding.modifiers.lazy) {
+      if (!binding.modifiers.lazy) { //加.lazy会监听input的change事件，没有输入法的问题
         el.addEventListener('compositionstart', onCompositionStart)
         el.addEventListener('compositionend', onCompositionEnd)
         // Safari < 10.2 & UIWebView doesn't fire compositionend when

@@ -145,26 +145,26 @@ function genDefaultModel (
 
   const { lazy, number, trim } = modifiers || {}
   const needCompositionGuard = !lazy && type !== 'range'
-  const event = lazy
+  const event = lazy //有.lazy修饰符，会监听input的change事件
     ? 'change'
     : type === 'range'
       ? RANGE_TOKEN
       : 'input'
 
   let valueExpression = '$event.target.value'
-  if (trim) {
+  if (trim) { //.trim会去除两边的空格
     valueExpression = `$event.target.value.trim()`
   }
-  if (number) {
+  if (number) { //转换成数字
     valueExpression = `_n(${valueExpression})`
   }
 
   let code = genAssignmentCode(value, valueExpression)
-  if (needCompositionGuard) {
+  if (needCompositionGuard) { //输入法有关
     code = `if($event.target.composing)return;${code}`
   }
 
-  addProp(el, 'value', `(${value})`)
+  addProp(el, 'value', `(${value})`) //添加value属性
   addHandler(el, event, code, null, true)
   if (trim || number) {
     addHandler(el, 'blur', '$forceUpdate()')

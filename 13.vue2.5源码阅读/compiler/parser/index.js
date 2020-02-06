@@ -588,7 +588,7 @@ function processAttrs (el) {
         }
         addDirective(el, name, rawName, value, arg, modifiers)
         if (process.env.NODE_ENV !== 'production' && name === 'model') {
-          checkForAliasModel(el, value)
+          checkForAliasModel(el, value) //检查此元素上如果有v-for，有没有使用此value
         }
       }
     } else {

@@ -218,7 +218,7 @@ export function genData (el: ASTElement, state: CodegenState): string {
 
   // directives first.
   // directives may mutate the el's other properties before they are generated.
-  const dirs = genDirectives(el, state)
+  const dirs = genDirectives(el, state) //处理指令
   if (dirs) data += dirs + ','
 
   // key

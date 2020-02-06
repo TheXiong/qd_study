@@ -210,10 +210,20 @@ export function createPatchFunction (backend) {
   function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
     let i = vnode.data //hooks里面的init方法
     if (isDef(i)) {
-      const isReactivated = isDef(vnode.componentInstance) && i.keepAlive
+      const isReactivated = isDef(vnode.componentInstance) && i.keepAlive 
+      //keep-alive组件render时会在它的子组件上挂载keepAlive属性，i.keepAlive如果为true，则当前渲染的是keep-alive的子组件
       if (isDef(i = i.hook) && isDef(i = i.init)) {
         i(vnode, false /* hydrating */)
-      }  //组件init会完成到组件patch，但不会插入到真实dom
+      }
+      /**
+       * 
+       * init方法：
+       * 对于普通组件：1、根据组件vnode，创建子组件vm实例 2、调用子组件实例$mount
+       * 对于keep-alive:
+       *        第一次渲染：和普通组件一样，唯一不同的是，keep-alive组件在render里面对子组件vnode进行了缓存
+       *        后续渲染：keep-alive组件render时返回子组件缓存的vnode，缓存的vnode在上面调用init会走不一样的逻辑
+       */
+      
       // after calling the init hook, if the vnode is a child component
       // it should've created a child instance and mounted it. the child
       // component also has set the placeholder vnode's elm.
@@ -221,7 +231,7 @@ export function createPatchFunction (backend) {
       if (isDef(vnode.componentInstance)) { //子组件vm实例
         initComponent(vnode, insertedVnodeQueue)
         insert(parentElm, vnode.elm, refElm) //将vnode.elm append到parentElm
-        if (isTrue(isReactivated)) {
+        if (isTrue(isReactivated)) { //被keep-alive的组件
           reactivateComponent(vnode, insertedVnodeQueue, parentElm, refElm)
         }
         return true

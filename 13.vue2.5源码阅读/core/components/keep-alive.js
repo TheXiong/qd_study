@@ -71,7 +71,7 @@ export default {
     }
   },
 
-  mounted () {
+  mounted () { //监听include、exclude，对组件添加或移除缓存
     this.$watch('include', val => {
       pruneCache(this, name => matches(val, name))
     })
@@ -82,18 +82,18 @@ export default {
 
   render () {
     const slot = this.$slots.default
-    const vnode: VNode = getFirstComponentChild(slot)
+    const vnode: VNode = getFirstComponentChild(slot) //获取第一个组件child，只有组件能做缓存
     const componentOptions: ?VNodeComponentOptions = vnode && vnode.componentOptions
     if (componentOptions) {
       // check pattern
-      const name: ?string = getComponentName(componentOptions)
+      const name: ?string = getComponentName(componentOptions) //获取组件name
       const { include, exclude } = this
       if (
         // not included
         (include && (!name || !matches(include, name))) ||
         // excluded
         (exclude && name && matches(exclude, name))
-      ) {
+      ) { //name不在include中或在exclude中，则不做缓存，直接返回vnode
         return vnode
       }
 
@@ -102,23 +102,24 @@ export default {
         // same constructor may get registered as different local components
         // so cid alone is not enough (#3269)
         ? componentOptions.Ctor.cid + (componentOptions.tag ? `::${componentOptions.tag}` : '')
-        : vnode.key
-      if (cache[key]) {
+        : vnode.key //如果该vnode自定义了key，则用该key做键，否则拼接一个键
+      if (cache[key]) { //命中缓存
         vnode.componentInstance = cache[key].componentInstance
         // make current key freshest
+        //将刚用的放在最后面，这样最不常用的就会保留在最前面
         remove(keys, key)
         keys.push(key)
       } else {
         cache[key] = vnode
         keys.push(key)
         // prune oldest entry
-        if (this.max && keys.length > parseInt(this.max)) {
-          pruneCacheEntry(cache, keys[0], keys, this._vnode)
+        if (this.max && keys.length > parseInt(this.max)) { //max可以限制最大缓存组件数量
+          pruneCacheEntry(cache, keys[0], keys, this._vnode) //keys[0]，是最早缓存的组件，可能是最不常用的组件
         }
       }
 
-      vnode.data.keepAlive = true
+      vnode.data.keepAlive = true //子组件的vnode
     }
-    return vnode || (slot && slot[0])
+    return vnode || (slot && slot[0]) //返回的是子组件的vnode
   }
 }

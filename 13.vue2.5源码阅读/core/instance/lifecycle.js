@@ -35,7 +35,7 @@ export function initLifecycle (vm: Component) { //把组件实例里面用到的
   // locate first non-abstract parent
   //建立父子组件的关系
   let parent = options.parent
-  if (parent && !options.abstract) {
+  if (parent && !options.abstract) { //keep-alive组件abstract是true
     while (parent.$options.abstract && parent.$parent) {
       parent = parent.$parent
     }
