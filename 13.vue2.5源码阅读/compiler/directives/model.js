@@ -23,7 +23,7 @@ export function genComponentModel (
   }
   const assignment = genAssignmentCode(value, valueExpression)
 
-  el.model = {
+  el.model = { //添加model属性
     value: `(${value})`,
     expression: JSON.stringify(value),
     callback: `function (${baseValueExpression}) {${assignment}}`

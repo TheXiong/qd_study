@@ -34,7 +34,7 @@ export default function model (
   }
 
   if (el.component) {
-    genComponentModel(el, value, modifiers)
+    genComponentModel(el, value, modifiers) //如果是组件上写了v-model
     // component v-model doesn't need extra runtime
     return false
   } else if (tag === 'select') {

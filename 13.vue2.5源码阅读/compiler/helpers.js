@@ -127,8 +127,8 @@ export function getBindingAttr (
 ): ?string {
   const dynamicValue =
     getAndRemoveAttr(el, ':' + name) ||
-    getAndRemoveAttr(el, 'v-bind:' + name)
-  if (dynamicValue != null) {
+    getAndRemoveAttr(el, 'v-bind:' + name) //name是否是动态绑定的值
+  if (dynamicValue != null) { //动态值
     return parseFilters(dynamicValue)
   } else if (getStatic !== false) {
     const staticValue = getAndRemoveAttr(el, name)

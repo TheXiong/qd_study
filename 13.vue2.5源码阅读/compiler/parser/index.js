@@ -466,8 +466,8 @@ function processOnce (el) {
 }
 
 function processSlot (el) {
-  if (el.tag === 'slot') {
-    el.slotName = getBindingAttr(el, 'name')
+  if (el.tag === 'slot') { //<slot name="h"></slot>
+    el.slotName = getBindingAttr(el, 'name') //拿到slotName
     if (process.env.NODE_ENV !== 'production' && el.key) {
       warn(
         `\`key\` does not work on <slot> because slots are abstract outlets ` +
@@ -475,10 +475,10 @@ function processSlot (el) {
         `Use the key on a wrapping element instead.`
       )
     }
-  } else {
+  } else { //<h1 slot="h">aaaa</h1>
     let slotScope
-    if (el.tag === 'template') {
-      slotScope = getAndRemoveAttr(el, 'scope')
+    if (el.tag === 'template') { //如果标签是template
+      slotScope = getAndRemoveAttr(el, 'scope') //定义了属性scope(2.5以后会保警告)
       /* istanbul ignore if */
       if (process.env.NODE_ENV !== 'production' && slotScope) {
         warn(
@@ -489,8 +489,8 @@ function processSlot (el) {
           true
         )
       }
-      el.slotScope = slotScope || getAndRemoveAttr(el, 'slot-scope')
-    } else if ((slotScope = getAndRemoveAttr(el, 'slot-scope'))) {
+      el.slotScope = slotScope || getAndRemoveAttr(el, 'slot-scope') //解析定义的slot-scope
+    } else if ((slotScope = getAndRemoveAttr(el, 'slot-scope'))) { //可以在非template上定义slot-scope
       /* istanbul ignore if */
       if (process.env.NODE_ENV !== 'production' && el.attrsMap['v-for']) {
         warn(
@@ -502,12 +502,12 @@ function processSlot (el) {
       }
       el.slotScope = slotScope
     }
-    const slotTarget = getBindingAttr(el, 'slot')
+    const slotTarget = getBindingAttr(el, 'slot') //拿到slotTarget
     if (slotTarget) {
       el.slotTarget = slotTarget === '""' ? '"default"' : slotTarget
       // preserve slot as an attribute for native shadow DOM compat
       // only for non-scoped slots.
-      if (el.tag !== 'template' && !el.slotScope) {
+      if (el.tag !== 'template' && !el.slotScope) { //非作用域插槽
         addAttr(el, 'slot', slotTarget)
       }
     }

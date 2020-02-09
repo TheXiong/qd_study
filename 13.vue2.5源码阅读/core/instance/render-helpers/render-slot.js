@@ -13,7 +13,7 @@ export function renderSlot (
 ): ?Array<VNode> {
   const scopedSlotFn = this.$scopedSlots[name]
   let nodes
-  if (scopedSlotFn) { // scoped slot
+  if (scopedSlotFn) { //作用域插槽
     props = props || {}
     if (bindObject) {
       if (process.env.NODE_ENV !== 'production' && !isObject(bindObject)) {
@@ -24,9 +24,9 @@ export function renderSlot (
       }
       props = extend(extend({}, bindObject), props)
     }
-    nodes = scopedSlotFn(props) || fallback
-  } else {
-    nodes = this.$slots[name] || fallback
+    nodes = scopedSlotFn(props) || fallback //把props作为参数传入
+  } else { //普通插槽
+    nodes = this.$slots[name] || fallback //this.$slots在initRender里面
   }
 
   const target = props && props.slot

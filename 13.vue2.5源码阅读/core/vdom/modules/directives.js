@@ -33,16 +33,16 @@ function _update (oldVnode, vnode) {
     dir = newDirs[key]
     if (!oldDir) {
       // new directive, bind
-      callHook(dir, 'bind', vnode, oldVnode) //执行指令上定义的bind函数
+      callHook(dir, 'bind', vnode, oldVnode) //执行指令上定义的bind函数（如果定义了）
       if (dir.def && dir.def.inserted) {
-        dirsWithInsert.push(dir)
+        dirsWithInsert.push(dir) //是否定义inserted钩子，有就先放到dirsWithInsert数组中
       }
     } else {
       // existing directive, update
       dir.oldValue = oldDir.value
-      callHook(dir, 'update', vnode, oldVnode) //执行指令上定义的update函数
+      callHook(dir, 'update', vnode, oldVnode) //执行指令上定义的update函数（如果定义了）
       if (dir.def && dir.def.componentUpdated) {
-        dirsWithPostpatch.push(dir)
+        dirsWithPostpatch.push(dir) //是否定义componentUpdated钩子，有就先放到dirsWithPostpatch数组中
       }
     }
   }
@@ -50,11 +50,11 @@ function _update (oldVnode, vnode) {
   if (dirsWithInsert.length) {
     const callInsert = () => {
       for (let i = 0; i < dirsWithInsert.length; i++) {
-        callHook(dirsWithInsert[i], 'inserted', vnode, oldVnode) //执行指令上定义的inserted函数
+        callHook(dirsWithInsert[i], 'inserted', vnode, oldVnode) //执行指令上定义的inserted函数（如果定义了）
       }
     }
-    if (isCreate) {
-      mergeVNodeHook(vnode, 'insert', callInsert)
+    if (isCreate) { //如果是创建
+      mergeVNodeHook(vnode, 'insert', callInsert) //将定义的所有指令的inserted钩子merge到vnode.data.hooks的insert钩子上
     } else {
       callInsert()
     }

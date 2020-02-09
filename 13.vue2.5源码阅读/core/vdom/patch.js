@@ -219,9 +219,8 @@ export function createPatchFunction (backend) {
        * 
        * init方法：
        * 对于普通组件：1、根据组件vnode，创建子组件vm实例 2、调用子组件实例$mount
-       * 对于keep-alive:
-       *        第一次渲染：和普通组件一样，唯一不同的是，keep-alive组件在render里面对子组件vnode进行了缓存
-       *        后续渲染：keep-alive组件render时返回子组件缓存的vnode，缓存的vnode在上面调用init会走不一样的逻辑
+       * 对于keep-alive: 和普通组件一样，唯一不同的是，keep-alive组件在render里面对子组件vnode进行了缓存
+       * 
        */
       
       // after calling the init hook, if the vnode is a child component

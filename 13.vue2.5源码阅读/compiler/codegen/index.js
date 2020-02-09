@@ -218,7 +218,7 @@ export function genData (el: ASTElement, state: CodegenState): string {
 
   // directives first.
   // directives may mutate the el's other properties before they are generated.
-  const dirs = genDirectives(el, state) //处理指令
+  const dirs = genDirectives(el, state) //处理指令，组件上的有些指令会返回undefined
   if (dirs) data += dirs + ','
 
   // key
@@ -260,12 +260,12 @@ export function genData (el: ASTElement, state: CodegenState): string {
     data += `${genHandlers(el.nativeEvents, true)},`
   }
   // slot target
-  // only for non-scoped slots
+  // only for non-scoped slots 普通插槽
   if (el.slotTarget && !el.slotScope) {
     data += `slot:${el.slotTarget},`
   }
   // scoped slots
-  if (el.scopedSlots) {
+  if (el.scopedSlots) { //作用域插槽
     data += `${genScopedSlots(el.scopedSlots, state)},`
   }
   // component v-model
@@ -310,7 +310,7 @@ function genDirectives (el: ASTElement, state: CodegenState): string | void {
     if (gen) {
       // compile-time directive that manipulates AST.
       // returns true if it also needs a runtime counterpart.
-      needRuntime = !!gen(el, dir, state.warn)
+      needRuntime = !!gen(el, dir, state.warn) //有些指令挂载在组件上，needRuntime是undefined
     }
     if (needRuntime) {
       hasRuntime = true

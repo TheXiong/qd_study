@@ -152,8 +152,8 @@ export function createComponent (
   resolveConstructorOptions(Ctor)
 
   // transform component v-model data into props & events
-  if (isDef(data.model)) {
-    transformModel(Ctor.options, data)
+  if (isDef(data.model)) { //在组件上定义了v-model指令
+    transformModel(Ctor.options, data) //添加value属性，监听input事件，(可以自定义)
   }
 
   // extract props
@@ -250,8 +250,8 @@ function mergeHook (f1: any, f2: any): Function {
 // transform component v-model info (value and callback) into
 // prop and event handler respectively.
 function transformModel (options, data: any) {
-  const prop = (options.model && options.model.prop) || 'value'
-  const event = (options.model && options.model.event) || 'input'
+  const prop = (options.model && options.model.prop) || 'value' //可以自定义prop
+  const event = (options.model && options.model.event) || 'input' //可以自定义event
   ;(data.props || (data.props = {}))[prop] = data.model.value
   const on = data.on || (data.on = {})
   const existing = on[event]
