@@ -189,7 +189,7 @@ export class Store {
     })
   }
 
-  registerModule (path, rawModule, options = {}) {
+  registerModule (path, rawModule, options = {}) { //动态注入module
     if (typeof path === 'string') path = [path]
 
     if (process.env.NODE_ENV !== 'production') {
@@ -203,7 +203,7 @@ export class Store {
     resetStoreVM(this, this.state)
   }
 
-  unregisterModule (path) {
+  unregisterModule (path) { //动态注销module
     if (typeof path === 'string') path = [path]
 
     if (process.env.NODE_ENV !== 'production') {
