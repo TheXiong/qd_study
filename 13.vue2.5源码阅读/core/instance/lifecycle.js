@@ -218,7 +218,7 @@ export function mountComponent (
 }
 
 export function updateChildComponent (
-  vm: Component,
+  vm: Component, //子组件vm
   propsData: ?Object,
   listeners: ?Object,
   parentVnode: MountedComponentVNode,
@@ -240,7 +240,7 @@ export function updateChildComponent (
   vm.$options._parentVnode = parentVnode
   vm.$vnode = parentVnode // update vm's placeholder node without re-render
 
-  if (vm._vnode) { // update child tree's parent
+  if (vm._vnode) { // 更新组件的父vnode
     vm._vnode.parent = parentVnode
   }
   vm.$options._renderChildren = renderChildren
@@ -251,7 +251,7 @@ export function updateChildComponent (
   vm.$attrs = parentVnode.data.attrs || emptyObject
   vm.$listeners = listeners || emptyObject
 
-  // update props
+  // 给子组件每个prop赋值触发setter
   if (propsData && vm.$options.props) {
     toggleObserving(false)
     const props = vm._props
@@ -262,17 +262,17 @@ export function updateChildComponent (
       props[key] = validateProp(key, propOptions, propsData, vm)
     }
     toggleObserving(true)
-    // keep a copy of raw propsData
+    // 对原始的父组件传入的propsData做保留
     vm.$options.propsData = propsData
   }
 
-  // update listeners
+  // 更新子组件上的listeners
   listeners = listeners || emptyObject
   const oldListeners = vm.$options._parentListeners
   vm.$options._parentListeners = listeners
   updateComponentListeners(vm, listeners, oldListeners)
 
-  // resolve slots + force update if has children
+  // 父组件如果有Children，则会作为插槽
   if (hasChildren) {
     vm.$slots = resolveSlots(renderChildren, parentVnode.context)
     vm.$forceUpdate()

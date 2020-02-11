@@ -78,9 +78,11 @@ export function initInternalComponent (vm: Component, options: InternalComponent
   opts.parent = options.parent
   opts._parentVnode = parentVnode
 
+  //componentOptions在Vnode构造函数里可见，是在create-components里面调用new Vnode传入
   const vnodeComponentOptions = parentVnode.componentOptions
   opts.propsData = vnodeComponentOptions.propsData
-  opts._parentListeners = vnodeComponentOptions.listeners //父组件的自定义事件
+  //listeners是在create-components将编译后自定义事件on赋值给了listeners
+  opts._parentListeners = vnodeComponentOptions.listeners //父组件的自定义事件，将在initEvents使用
   opts._renderChildren = vnodeComponentOptions.children
   opts._componentTag = vnodeComponentOptions.tag
 

@@ -67,8 +67,9 @@ function remove (
   )
 }
 
-function updateDOMListeners (oldVnode: VNodeWithData, vnode: VNodeWithData) {
-  if (isUndef(oldVnode.data.on) && isUndef(vnode.data.on)) {
+function updateDOMListeners (oldVnode: VNodeWithData, vnode: VNodeWithData) { //添加的是原生listeners
+  //为什么是on,在create-component里面把nativeon赋值给了on，原来on上面的放到了listeners上面了
+  if (isUndef(oldVnode.data.on) && isUndef(vnode.data.on)) { 
     return
   }
   const on = vnode.data.on || {}

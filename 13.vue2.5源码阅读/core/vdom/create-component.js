@@ -55,8 +55,9 @@ const componentVNodeHooks = {
   prepatch (oldVnode: MountedComponentVNode, vnode: MountedComponentVNode) {
     const options = vnode.componentOptions
     const child = vnode.componentInstance = oldVnode.componentInstance
+    //触发子组件更新，传入新的参数
     updateChildComponent(
-      child,
+      child, //子组件vm实例
       options.propsData, // updated props
       options.listeners, // updated listeners
       vnode, // new parent vnode
@@ -166,10 +167,10 @@ export function createComponent (
 
   // extract listeners, since these needs to be treated as
   // child component listeners instead of DOM listeners
-  const listeners = data.on
+  const listeners = data.on //把组件自定义事件放到listeners上
   // replace with listeners with .native modifier
   // so it gets processed during parent component patch.
-  data.on = data.nativeOn
+  data.on = data.nativeOn //把dom原生事件放到on上面
 
   if (isTrue(Ctor.options.abstract)) {
     // abstract components do not keep anything
@@ -193,7 +194,8 @@ export function createComponent (
     data, undefined, undefined, undefined, context,
     { Ctor, propsData, listeners, tag, children },
     asyncFactory
-  )
+  ) 
+  //Ctor, propsData, listeners, tag, children非常重要，是父组件往子组件里vnode传入的所有信息
 
   // Weex specific: invoke recycle-list optimized @render function for
   // extracting cell-slot template.

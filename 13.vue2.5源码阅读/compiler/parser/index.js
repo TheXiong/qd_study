@@ -319,7 +319,7 @@ export function processElement (element: ASTElement, options: CompilerOptions) {
 
   // determine whether this is a plain element after
   // removing structural attributes
-  element.plain = !element.key && !element.attrsList.length
+  element.plain = !element.key && !element.attrsList.length //没有属性也没有key是纯element
 
   processRef(element)
   processSlot(element)

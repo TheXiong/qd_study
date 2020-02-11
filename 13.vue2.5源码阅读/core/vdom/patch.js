@@ -148,7 +148,7 @@ export function createPatchFunction (backend) {
     const data = vnode.data
     const children = vnode.children
     const tag = vnode.tag
-    if (isDef(tag)) {
+    if (isDef(tag)) { //是标签
       if (process.env.NODE_ENV !== 'production') {
         if (data && data.pre) {
           creatingElmInVPre++
@@ -188,20 +188,20 @@ export function createPatchFunction (backend) {
           insert(parentElm, vnode.elm, refElm)
         }
       } else {
-        createChildren(vnode, children, insertedVnodeQueue)
-        if (isDef(data)) {
-          invokeCreateHooks(vnode, insertedVnodeQueue)
+        createChildren(vnode, children, insertedVnodeQueue) //创建Children
+        if (isDef(data)) { //这儿创建elm属性、class、event、style。。。等
+          invokeCreateHooks(vnode, insertedVnodeQueue) //触发create钩子，并添加到insertedVnodeQueue
         }
-        insert(parentElm, vnode.elm, refElm)
+        insert(parentElm, vnode.elm, refElm) //添加到parentElm
       }
 
       if (process.env.NODE_ENV !== 'production' && data && data.pre) {
         creatingElmInVPre--
       }
-    } else if (isTrue(vnode.isComment)) {
+    } else if (isTrue(vnode.isComment)) { //是注释
       vnode.elm = nodeOps.createComment(vnode.text)
       insert(parentElm, vnode.elm, refElm)
-    } else {
+    } else { //是文本
       vnode.elm = nodeOps.createTextNode(vnode.text)
       insert(parentElm, vnode.elm, refElm)
     }
@@ -246,8 +246,8 @@ export function createPatchFunction (backend) {
     //patch会返回真实dom挂载到vm.$el
     vnode.elm = vnode.componentInstance.$el //在vnode.elm上存储该真实dom
     if (isPatchable(vnode)) {
-      invokeCreateHooks(vnode, insertedVnodeQueue)
-      setScope(vnode)
+      invokeCreateHooks(vnode, insertedVnodeQueue) //触发create钩子，这儿创建属性、class、event、style。。。等
+      setScope(vnode) //scope style有关
     } else {
       // empty component root.
       // skip all element-related modules except for ref (#3455)
@@ -317,7 +317,7 @@ export function createPatchFunction (backend) {
     }
     i = vnode.data.hook // Reuse variable
     if (isDef(i)) {
-      if (isDef(i.create)) i.create(emptyNode, vnode)
+      if (isDef(i.create)) i.create(emptyNode, vnode) //这儿创建属性、class、event、style。。。等
       if (isDef(i.insert)) insertedVnodeQueue.push(vnode)
     }
   }
@@ -557,14 +557,15 @@ export function createPatchFunction (backend) {
 
     let i
     const data = vnode.data
-    if (isDef(data) && isDef(i = data.hook) && isDef(i = i.prepatch)) { //说明是组件vnode
-      i(oldVnode, vnode) //执行组件prepatch钩子
+    //组件更新时，组件里面有其他子组件时，子组件会走这儿进行更新
+    if (isDef(data) && isDef(i = data.hook) && isDef(i = i.prepatch)) { //i.prepatch说明是组件vnode
+      i(oldVnode, vnode) //执行组件prepatch钩子=》传入新的数据并触发更新
     }
 
     //拿到新旧节点的children
     const oldCh = oldVnode.children
     const ch = vnode.children
-    if (isDef(data) && isPatchable(vnode)) {
+    if (isDef(data) && isPatchable(vnode)) { //调用update钩子，这儿更新属性、class、event、style。。。等
       for (i = 0; i < cbs.update.length; ++i) cbs.update[i](oldVnode, vnode)
       if (isDef(i = data.hook) && isDef(i = i.update)) i(oldVnode, vnode)
     }
@@ -575,7 +576,7 @@ export function createPatchFunction (backend) {
         if (process.env.NODE_ENV !== 'production') {
           checkDuplicateKeys(ch) //检查有没有重复的key
         }
-        if (isDef(oldVnode.text)) nodeOps.setTextContent(elm, '')
+        if (isDef(oldVnode.text)) nodeOps.setTextContent(elm, '') //清空旧节点
         addVnodes(elm, null, ch, 0, ch.length - 1, insertedVnodeQueue) //添加新节点
       } else if (isDef(oldCh)) { //只有旧节点children存在
         removeVnodes(elm, oldCh, 0, oldCh.length - 1) //删除vnode
@@ -688,7 +689,7 @@ export function createPatchFunction (backend) {
         for (const key in data) {
           if (!isRenderedModule(key)) {
             fullInvoke = true
-            invokeCreateHooks(vnode, insertedVnodeQueue)
+            invokeCreateHooks(vnode, insertedVnodeQueue) //这儿创建属性、class、event、style。。。等
             break
           }
         }
@@ -815,12 +816,12 @@ export function createPatchFunction (backend) {
         if (isDef(parentElm)) {
           removeVnodes(parentElm, [oldVnode], 0, 0)
         } else if (isDef(oldVnode.tag)) {
-          invokeDestroyHook(oldVnode)
+          invokeDestroyHook(oldVnode) //触发Destroy钩子
         }
       }
     }
 
-    invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch)
+    invokeInsertHook(vnode, insertedVnodeQueue, isInitialPatch) //触发insert钩子
     return vnode.elm
   }
 }
