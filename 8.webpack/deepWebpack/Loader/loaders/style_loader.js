@@ -1,5 +1,7 @@
 
 module.exports = function(source){
+    console.log(source);
+    
     return `
     !function(){
         let styleElement = document.createElement("style");

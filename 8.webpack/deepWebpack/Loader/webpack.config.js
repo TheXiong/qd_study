@@ -23,6 +23,10 @@ module.exports = {
                         options: {}
                     },
                     {
+                        loader: path.resolve(__dirname, "./loaders/css_loader.js"),
+                        options: {}
+                    },
+                    {
                         loader: path.resolve(__dirname, "./loaders/less_loader.js"),
                         options: {}
                     }
