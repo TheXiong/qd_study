@@ -105,7 +105,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony import */ var _ind
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("\n    !function(){\n        let styleElement = document.createElement(\"style\");\n        styleElement.innerText = \"\\nbody {\\n  font-size: 20px;\\n}\\nbody {\\n  color: red;\\n}\\n\";\n        let head = document.getElementsByTagName(\"head\");\n        head[0].appendChild(styleElement)\n    }()\n\n\n//# sourceURL=webpack:///./src/index.less?");
+eval("\n    !function(){\n        let styleElement = document.createElement(\"style\");\n        styleElement.innerText = \"require(C:\\Users\\Administrator\\Desktop\\qd_study\\8.webpack\\deepWebpack\\Loader\\src\\1.css);\\nbody {\\n  font-size: 20px;\\n}\\nbody {\\n  color: red;\\n}\\n\";\n        let head = document.getElementsByTagName(\"head\");\n        head[0].appendChild(styleElement)\n    }()\n\n\n//# sourceURL=webpack:///./src/index.less?");
 
 /***/ })
 
