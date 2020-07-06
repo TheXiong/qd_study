@@ -37,7 +37,7 @@ function submitUrlToBaidu(option) {
 
 var urls = []
 const parser = new xml2js.Parser()
-fs.readFile('./sitemap_zh.xml', 'utf-8', (error, data) => {
+fs.readFile('./sitemap_en.xml', 'utf-8', (error, data) => {
     if (error) {
         console.log(error)
     } else {
