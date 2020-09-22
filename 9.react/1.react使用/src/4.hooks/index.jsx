@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
+import React from "react";
+import UseStateDemo from "./useStateDemo.js";
+import UseEffectDemo from "./useEffectDemo.js";
+import UseRef from "./useRef.js";
+import ForwardRef from "./forwardRef.js";
 
-export default function Example() {
-  // 声明一个新的叫做 “count” 的 state 变量
-  const [count, setCount] = useState(0);
-
+export default function Hooks() {
   return (
-    <div>
-      <p>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
-      </button>
-    </div>
+    <>
+      UseStateDemo:
+      <UseStateDemo />
+      <br />
+      UseEffectDemo:
+      <UseEffectDemo />
+      <br />
+      UseRef:
+      <UseRef />
+      <br/>
+      ForwardRef:
+      <ForwardRef />
+    </>
   );
 }
